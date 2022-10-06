@@ -1,1 +1,4 @@
+# don't track ide files
+/.idea
+
 /target
