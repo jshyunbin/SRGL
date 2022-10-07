@@ -16,8 +16,9 @@ Render images on real-time.
 SRGL is in a very early stage of development and many of the features are wip.
 
 - 2D rendering
-- anti-aliasing
-- 3D rendering
-- shading (Flat, Gouraud, Phong)
-- create vertices, polygons
-- ray tracing
+- anti-aliasing (wip)
+- 3D rendering (wip)
+- shading (Flat, Gouraud, Phong) (wip)
+- create vertices, polygons (wip)
+- ray tracing (wip)
+- keyboard/mouse interface (wip)
