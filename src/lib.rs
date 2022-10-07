@@ -7,67 +7,101 @@ use pixels::Error::Surface;
 use winit::dpi::LogicalSize;
 use winit::event::{Event, VirtualKeyCode};
 use winit::event_loop::{ControlFlow, EventLoop};
-use winit::window::WindowBuilder;
+use winit::window::{WindowBuilder, Window};
+use winit::window::CursorIcon;
 use winit_input_helper::WinitInputHelper;
 
 
 mod s2d;
 mod s3d;
 
-pub enum RenderSetting {
-    S2D,
-    S3D(s3d::Camera, s3d::Shader, s3d::RenderMethod)
+
+
+#[derive(Default)]
+pub struct CanvasBuilder {
+    canvas: CanvasAttributes,
 }
 
-pub struct Window {
-    render_setting: RenderSetting,
+// #[derive(Clone)]
+pub struct CanvasAttributes {
+    pub width: Option<u32>,
+    pub height: Option<u32>,
+    pub title: String,
+    pub frame_rate: Option<u32>,
 }
 
-impl Window {
-    pub fn setup(render_setting: RenderSetting) -> Self {
+impl Default for CanvasAttributes {
+    fn default() -> Self {
         Self {
-            render_setting: render_setting
+            width: None,
+            height: None,
+            title: String::from(""),
+            frame_rate: None,
         }
     }
+}
 
-    pub fn matrix_push() {
-
+impl CanvasBuilder {
+    pub fn new() -> Self {
+        Default::default()
     }
 
-    pub fn matrix_pop() {
-
+    pub fn with_size(mut self, width: u32, height: u32) -> Self {
+        self.canvas.width = Some(width);
+        self.canvas.height = Some(height);
+        self
     }
 
-    pub fn run(width: u32, height: u32) -> Result<(), Error> {
+    pub fn with_title(mut self, title: String) -> Self {
+        self.canvas.title = title;
+        self
+    }
 
-        let size = LogicalSize::new(width as f64, height as f64);
+    pub fn build(self) -> Canvas {
+        Canvas {
+            width: self.canvas.width.expect("Size must be set"),
+            height: self.canvas.height.expect("Size must be set"),
+            title: self.canvas.title,
+        }
+    }
+}
+
+pub struct Canvas {
+    width: u32,
+    height: u32,
+    title: String,
+}
+
+impl Canvas {
+
+    //
+    //
+    pub fn run<F>(self, mut pixel_drawer: F) -> Result<(), Error>
+    where F: 'static + FnMut(&mut [u8]),
+    {
+        let size = LogicalSize::new(self.width as f64, self.height as f64);
 
         let event_loop = EventLoop::new();
         let mut input = WinitInputHelper::new();
         let window = WindowBuilder::new()
-            .with_title("simple2d")
+            .with_title(self.title)
             .with_resizable(false)
             .with_inner_size(size)
             .with_min_inner_size(size)
             .build(&event_loop)
             .unwrap();
+
         let mut pixels = {
             let window_size = window.inner_size();
-            let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
-            Pixels::new(width, height, surface_texture)?
+            let surface_texture = SurfaceTexture::new(window_size.width,
+                                                      window_size.height, &window);
+            Pixels::new(self.width, self.height, surface_texture)?
         };
+
 
         event_loop.run(move |event, _, control_flow| {
             if let Event::RedrawRequested(_) = event {
-                for (i, pixel) in pixels.get_frame()
-                    .chunks_exact_mut(4)
-                    .enumerate() {
-                    let x = (i % height as usize) as i16;
-                    let y = (i / width as usize) as i16;
-
-                    let rgba = [0x48, 0xb2, 0xe8, 0xff];
-                    pixel.copy_from_slice(&rgba);
-                }
+                pixel_drawer(pixels.get_frame());
                 if pixels
                     .render()
                     .map_err(|e| panic!("pixels.render() failed: {e}"))
@@ -78,7 +112,7 @@ impl Window {
                 }
             }
 
-            // Handle input events
+
             if input.update(&event) {
                 // Close events
                 if input.key_pressed(VirtualKeyCode::Escape) || input.quit() {
@@ -94,5 +128,6 @@ impl Window {
                 window.request_redraw();
             }
         });
+
     }
 }
