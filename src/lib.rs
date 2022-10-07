@@ -15,6 +15,12 @@ use winit_input_helper::WinitInputHelper;
 mod s2d;
 mod s3d;
 
+// trait for S2D and S3D modules
+// create a render and write
+//
+trait Render {
+    fn render<F>(&self) -> F where F: 'static + FnMut(&mut [u8]);
+}
 
 
 #[derive(Default)]
@@ -22,7 +28,7 @@ pub struct CanvasBuilder {
     canvas: CanvasAttributes,
 }
 
-// #[derive(Clone)]
+#[derive(Debug)]
 pub struct CanvasAttributes {
     pub width: Option<u32>,
     pub height: Option<u32>,
