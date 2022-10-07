@@ -17,6 +17,7 @@ SRGL is in a very early stage of development and many of the features are wip.
 
 - 2D rendering
 - anti-aliasing
-- 3D rendering/shading
+- 3D rendering
+- shading (Flat, Gouraud, Phong)
 - create vertices, polygons
 - ray tracing
