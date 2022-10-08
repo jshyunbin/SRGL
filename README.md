@@ -14,16 +14,11 @@ fn main() -> Result<(), srgl::Error> {
 }
 ```
 
-Simple and easy to use graphic library.
-
 ## Usage
 
-**SRGL** is designed to be as simple and easy to use even for non-programmers. You could open an empty window with just 
+**SRGL** is designed to be as simple and easy to use even for non-programmers. You can open an empty window with just 
 few lines of code!
 
-
-
-Render images on real-time.
 
 ## Features
 
