@@ -65,6 +65,11 @@ impl CanvasBuilder {
         self
     }
 
+    pub fn with_s3d(mut self) -> Self {
+        self.render = RenderType::S3D;
+        self
+    }
+
     pub fn build(self) -> Canvas {
         let w = self.canvas.width.expect("Size must be set");
         let h = self.canvas.height.expect("Size must be set");

@@ -16,10 +16,17 @@ Render images on real-time.
 **SRGL** is in a very early stage of development and many of the 
 features are still work in progress.
 
-> - 2D rendering 
-> - anti-aliasing (wip)
-> - 3D rendering (wip)
-> - shading (Flat, Gouraud, Phong) (wip)
-> - create vertices, polygons (wip)
-> - ray tracing (wip)
-> - keyboard/mouse interface (wip)
+ - 2D rendering 
+ - anti-aliasing (wip)
+ - 3D rendering (wip)
+ - shading (Flat, Gouraud, Phong) (wip)
+ - create vertices, polygons (wip)
+ - ray tracing (wip)
+ - keyboard/mouse interface (wip)
+
+## Examples
+
+Some examples are available in `/examples`.
+
+- [Simple2D](https://github.com/jshyunbin/SRGL/tree/master/example/simple2d)
+
