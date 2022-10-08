@@ -38,5 +38,5 @@ features are still work in progress.
 
 Examples are available in `/examples`.
 
-- [Simple2D](https://github.com/jshyunbin/SRGL/tree/master/examples/simple2d)
+- [Simple2D](./examples/simple2d)
 
