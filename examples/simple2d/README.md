@@ -1,5 +1,6 @@
 # simple2d
 
-simple2d is an example use of the srgl library.
+simple2d is an example use of the srgl library. \
+Simply opens a window. 
 
-simple2d opens a window when run. 
+![screenshot](../../img/simple2d.png)
