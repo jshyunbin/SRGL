@@ -1,33 +1,40 @@
 
-pub use crate::s2d::*;
-pub use crate::s3d::*;
+pub use render::{Render, Rend};
+pub use render::s2d::S2D;
+pub use render::s3d::S3D;
 pub use pixels::Error;
 use pixels::{Pixels, SurfaceTexture};
 use pixels::Error::Surface;
 use winit::dpi::LogicalSize;
 use winit::event::{Event, VirtualKeyCode};
 use winit::event_loop::{ControlFlow, EventLoop};
-use winit::window::{WindowBuilder, Window};
+use winit::window::{Window, WindowBuilder};
 use winit::window::CursorIcon;
 use winit_input_helper::WinitInputHelper;
 
 
-mod s2d;
-mod s3d;
+mod render;
 
+// trait for S2D and S3D modules
+// create a render and write
+//
 
+pub enum RenderType {
+    S2D,
+    S3D,
+}
 
 #[derive(Default)]
 pub struct CanvasBuilder {
     canvas: CanvasAttributes,
 }
 
-// #[derive(Clone)]
 pub struct CanvasAttributes {
     pub width: Option<u32>,
     pub height: Option<u32>,
     pub title: String,
     pub frame_rate: Option<u32>,
+    pub render: RenderType,
 }
 
 impl Default for CanvasAttributes {
@@ -37,6 +44,7 @@ impl Default for CanvasAttributes {
             height: None,
             title: String::from(""),
             frame_rate: None,
+            render: RenderType::S2D,
         }
     }
 }
@@ -57,11 +65,22 @@ impl CanvasBuilder {
         self
     }
 
+    pub fn with_s3d(mut self) -> Self {
+        self.canvas.render = RenderType::S3D;
+        self
+    }
+
     pub fn build(self) -> Canvas {
+        let w = self.canvas.width.expect("Size must be set");
+        let h = self.canvas.height.expect("Size must be set");
         Canvas {
-            width: self.canvas.width.expect("Size must be set"),
-            height: self.canvas.height.expect("Size must be set"),
+            width: w,
+            height: h,
             title: self.canvas.title,
+            render: match self.canvas.render {
+                RenderType::S2D => Render::S2D(S2D::new(w, h)),
+                RenderType::S3D => Render::S3D(S3D::new(w, h)),
+            }
         }
     }
 }
@@ -70,15 +89,11 @@ pub struct Canvas {
     width: u32,
     height: u32,
     title: String,
+    render: Render,
 }
 
 impl Canvas {
-
-    //
-    //
-    pub fn run<F>(self, mut pixel_drawer: F) -> Result<(), Error>
-    where F: 'static + FnMut(&mut [u8]),
-    {
+    pub fn run(self) -> Result<(), Error> {
         let size = LogicalSize::new(self.width as f64, self.height as f64);
 
         let event_loop = EventLoop::new();
@@ -101,7 +116,7 @@ impl Canvas {
 
         event_loop.run(move |event, _, control_flow| {
             if let Event::RedrawRequested(_) = event {
-                pixel_drawer(pixels.get_frame());
+                self.render.render(pixels.get_frame());
                 if pixels
                     .render()
                     .map_err(|e| panic!("pixels.render() failed: {e}"))
