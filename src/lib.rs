@@ -66,7 +66,7 @@ impl CanvasBuilder {
     }
 
     pub fn with_s3d(mut self) -> Self {
-        self.render = RenderType::S3D;
+        self.canvas.render = RenderType::S3D;
         self
     }
 

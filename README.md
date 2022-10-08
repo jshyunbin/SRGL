@@ -4,10 +4,24 @@
 
 **Simple Graphic Library in Rust.**
 
+```rust
+use srgl::CanvasBuilder;
+
+fn main() -> Result<(), srgl::Error> {
+    CanvasBuilder::new()
+        .with_size(400, 300)
+        .build().run()
+}
+```
+
+Simple and easy to use graphic library.
+
 ## Usage
 
 **SRGL** is designed to be as simple and easy to use even for non-programmers. You could open an empty window with just 
 few lines of code!
+
+
 
 Render images on real-time.
 
@@ -23,10 +37,11 @@ features are still work in progress.
  - create vertices, polygons (wip)
  - ray tracing (wip)
  - keyboard/mouse interface (wip)
+ - frame control (wip)
 
 ## Examples
 
-Some examples are available in `/examples`.
+Examples are available in `/examples`.
 
 - [Simple2D](https://github.com/jshyunbin/SRGL/tree/master/example/simple2d)
 
