@@ -1,8 +1,8 @@
 
-pub use render::{Render, Rend};
-pub use render::s2d::S2D;
-pub use render::s3d::S3D;
 pub use pixels::Error;
+use render::{Render, Rend};
+use render::s2d::S2D;
+use render::s3d::S3D;
 use pixels::{Pixels, SurfaceTexture};
 use pixels::Error::Surface;
 use winit::dpi::LogicalSize;
