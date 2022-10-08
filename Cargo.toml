@@ -3,6 +3,15 @@ name = "srgl"
 version = "0.1.0"
 edition = "2021"
 authors = ["Joshua Hyunbin Lee"]
+repository = "https://github.com/jshyunbin/SRGL"
+readme = "README.md"
+license = "MIT"
+include = [
+    "/Cargo.*",
+    "/LICENSE",
+    "/README.md",
+    "/src/**/*"
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
