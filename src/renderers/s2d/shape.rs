@@ -1,5 +1,5 @@
-use nalgebra::{Matrix, SVector};
-use pixels::wgpu::Color;
+use nalgebra::{Matrix, Vector3};
+use crate::renderers::Color;
 
 #[derive(Clone)]
 pub enum Shape {
@@ -25,14 +25,18 @@ impl Shape {
         }
     }
 
-    pub fn draw(&self, screen: &mut Vec<[u8; 4]>, width: usize) {
+    pub fn draw(&self, screen: &mut Vec<Vec<Color>>, width: usize) {
 
         match self {
             Shape::Point(point) => (),
             Shape::Line(line) => (),
             Shape::Circle(circle) => (),
             Shape::Rect(rect) => {
-
+                for x in rect.start[0] as usize..rect.end[0] as usize {
+                    for y in rect.start[1] as usize..rect.end[1] as usize {
+                        screen[x][y] = rect.color;
+                    }
+                }
             },
             Shape::Vertices(vertices) => (),
             Shape::Shapes(shapes) => {
@@ -45,23 +49,23 @@ impl Shape {
 }
 
 #[derive(Copy, Clone)]
-struct PointShape {
-    coord: SVector<f64, 3>,
+pub struct PointShape {
+    coord: Vector3<f64>,
     point_color: Color,
     size: f64,
 }
 
 #[derive(Copy, Clone)]
-struct LineShape {
-    start: SVector<f64, 3>,
-    end: SVector<f64, 3>,
+pub struct LineShape {
+    start: Vector3<f64>,
+    end: Vector3<f64>,
     stroke_color: Color,
     stroke_weight: f64,
 }
 
 #[derive(Copy, Clone)]
-struct CircleShape {
-    coord: SVector<f64, 3>,
+pub struct CircleShape {
+    coord: Vector3<f64>,
     radius: f64,
     color: Color,
     stroke: bool,
@@ -70,9 +74,9 @@ struct CircleShape {
 }
 
 #[derive(Copy, Clone)]
-struct RectShape {
-    start: SVector<f64, 3>,
-    end: SVector<f64, 3>,
+pub struct RectShape {
+    start: Vector3<f64>,
+    end: Vector3<f64>,
     color: Color,
     stroke: bool,
     stroke_color: Color,
@@ -80,8 +84,8 @@ struct RectShape {
 }
 
 #[derive(Copy, Clone)]
-struct ClosedShape {
-    vertices: SVector<f64, 3>,
+pub struct ClosedShape {
+    vertices: Vector3<f64>,
     color: Color,
     stroke: bool,
     stroke_color: Color,

@@ -4,7 +4,6 @@ use renderers::{Renderer, Render};
 use renderers::s2d::S2D;
 use renderers::s3d::S3D;
 use pixels::{Pixels, SurfaceTexture};
-use pixels::Error::Surface;
 use winit::dpi::LogicalSize;
 use winit::event::{Event, VirtualKeyCode};
 use winit::event_loop::{ControlFlow, EventLoop};

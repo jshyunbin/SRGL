@@ -1,7 +1,7 @@
 
 use crate::renderers::Render;
-use pixels::wgpu::Color;
 pub use crate::renderers::s2d::shape::Shape;
+use crate::renderers::Color;
 
 mod shape;
 
@@ -11,12 +11,12 @@ pub struct S2D {
     width: u32,
     height: u32,
     time: u32,
-    background: [u8; 4],
+    background: Color,
 }
 
 impl Render for S2D {
     fn render(&self, screen: &mut [u8]) {
-        let mut pixels = vec![self.background; (self.width * self.height) as usize];
+        let mut pixels = vec![vec![self.background; self.height as usize]; self.width as usize];
 
         self.shape.draw(&mut pixels, self.width as usize);
 
@@ -24,7 +24,7 @@ impl Render for S2D {
             let x = (i % self.width as usize);
             let y = (i / self.width as usize);
 
-            pixel.copy_from_slice(&pixels[i]);
+            pixel.copy_from_slice(&pixels[x][y].to_array());
             // time += 1;
         }
     }
@@ -37,7 +37,7 @@ impl S2D {
             width,
             height,
             time: 0,
-            background: [0x48, 0xb2, 0xe8, 0xff],
+            background: Color::from([0x48, 0xb2, 0xe8, 0xff]),
         }
     }
 }
