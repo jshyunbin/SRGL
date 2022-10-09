@@ -11,6 +11,7 @@ use winit::event_loop::{ControlFlow, EventLoop};
 use winit::window::{Window, WindowBuilder};
 use winit::window::CursorIcon;
 use winit_input_helper::WinitInputHelper;
+use crate::renderers::s2d::Shape;
 
 mod renderers;
 
@@ -74,7 +75,7 @@ impl CanvasBuilder {
             height: h,
             title: self.canvas.title,
             render: match self.canvas.render {
-                RenderType::S2D => Renderer::S2D(S2D::new(w, h)),
+                RenderType::S2D => Renderer::S2D(S2D::new(w, h, Shape::Shapes(vec![]))),
                 RenderType::S3D => Renderer::S3D(S3D::new(w, h)),
             }
         }

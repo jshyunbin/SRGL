@@ -1,7 +1,7 @@
 use nalgebra::{Matrix, SVector};
 use pixels::wgpu::Color;
 
-
+#[derive(Clone)]
 pub enum Shape {
     Point(PointShape),
     Line(LineShape),
@@ -13,20 +13,45 @@ pub enum Shape {
 
 
 impl Shape {
-    pub fn add(mut self, shape: Shape) -> Self {
+    pub fn add(self, shape: Shape) -> Self{
         match self {
-            Shape::Shapes(shapes) => Shape::Shapes(shapes.push(shape)),
-            s => Shape::Shapes(vec![s, shape]),
+            Shape::Shapes(mut shapes) => {
+                shapes.push(shape);
+                Shape::Shapes(shapes)
+            },
+            s => {
+                Shape::Shapes(vec![s, shape])
+            },
+        }
+    }
+
+    pub fn draw(&self, screen: &mut Vec<[u8; 4]>, width: usize) {
+
+        match self {
+            Shape::Point(point) => (),
+            Shape::Line(line) => (),
+            Shape::Circle(circle) => (),
+            Shape::Rect(rect) => {
+
+            },
+            Shape::Vertices(vertices) => (),
+            Shape::Shapes(shapes) => {
+                for shape in shapes {
+                    shape.draw(screen, width);
+                }
+            }
         }
     }
 }
 
+#[derive(Copy, Clone)]
 struct PointShape {
     coord: SVector<f64, 3>,
     point_color: Color,
     size: f64,
 }
 
+#[derive(Copy, Clone)]
 struct LineShape {
     start: SVector<f64, 3>,
     end: SVector<f64, 3>,
@@ -34,6 +59,7 @@ struct LineShape {
     stroke_weight: f64,
 }
 
+#[derive(Copy, Clone)]
 struct CircleShape {
     coord: SVector<f64, 3>,
     radius: f64,
@@ -43,6 +69,7 @@ struct CircleShape {
     stroke_weight: f64,
 }
 
+#[derive(Copy, Clone)]
 struct RectShape {
     start: SVector<f64, 3>,
     end: SVector<f64, 3>,
@@ -52,6 +79,7 @@ struct RectShape {
     stroke_weight: f64,
 }
 
+#[derive(Copy, Clone)]
 struct ClosedShape {
     vertices: SVector<f64, 3>,
     color: Color,
