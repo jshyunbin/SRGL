@@ -16,7 +16,7 @@ mod renderers;
 
 
 pub enum RenderType {
-    S2D,
+    S2D(Shape),
     S3D,
 }
 
@@ -40,7 +40,7 @@ impl Default for CanvasAttributes {
             height: None,
             title: String::from(""),
             frame_rate: None,
-            render: RenderType::S2D,
+            render: RenderType::S2D(Shape::Shapes(vec![])),
         }
     }
 }
@@ -61,6 +61,11 @@ impl CanvasBuilder {
         self
     }
 
+    pub fn with_s2d(mut self, shape: Shape) -> Self {
+        self.canvas.render = RenderType::S2D(shape);
+        self
+    }
+
     pub fn with_s3d(mut self) -> Self {
         self.canvas.render = RenderType::S3D;
         self
@@ -74,7 +79,7 @@ impl CanvasBuilder {
             height: h,
             title: self.canvas.title,
             render: match self.canvas.render {
-                RenderType::S2D => Renderer::S2D(S2D::new(w, h, Shape::Shapes(vec![]))),
+                RenderType::S2D(shape) => Renderer::S2D(S2D::new(w, h, shape)),
                 RenderType::S3D => Renderer::S3D(S3D::new(w, h)),
             }
         }
