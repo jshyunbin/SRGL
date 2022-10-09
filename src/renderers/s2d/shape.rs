@@ -13,7 +13,18 @@ pub enum Shape {
 
 
 impl Shape {
-    pub fn add(self, shape: Shape) -> Self{
+    pub fn make_rect(start: Vector3<f64>, end: Vector3<f64>, color: Color) -> Self {
+        Shape::Rect(RectShape{
+            start,
+            end,
+            color,
+            stroke: false,
+            stroke_color: color,
+            stroke_weight: 1.,
+        })
+    }
+
+    pub fn add_shape(self, shape: Shape) -> Self{
         match self {
             Shape::Shapes(mut shapes) => {
                 shapes.push(shape);
@@ -34,6 +45,9 @@ impl Shape {
             Shape::Rect(rect) => {
                 for x in rect.start[0] as usize..rect.end[0] as usize {
                     for y in rect.start[1] as usize..rect.end[1] as usize {
+                        if x >= screen.len() || y >= screen[0].len() {
+                            break;
+                        }
                         screen[x][y] = rect.color;
                     }
                 }
