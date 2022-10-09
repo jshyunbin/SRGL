@@ -1,7 +1,9 @@
 [package]
 name = "simple2d"
 version = "0.1.0"
+authors = ["Joshua Hyunbin Lee"]
 edition = "2021"
+publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
