@@ -12,12 +12,8 @@ use winit::window::{Window, WindowBuilder};
 use winit::window::CursorIcon;
 use winit_input_helper::WinitInputHelper;
 
-
 mod render;
 
-// trait for S2D and S3D modules
-// create a render and write
-//
 
 pub enum RenderType {
     S2D,
