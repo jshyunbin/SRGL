@@ -38,5 +38,6 @@ features are still work in progress.
 
 Examples are available in `/examples`.
 
+- [Simple-Window](./examples/simple-window)
 - [Simple2D](./examples/simple2d)
 
