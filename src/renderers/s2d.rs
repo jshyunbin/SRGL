@@ -37,7 +37,7 @@ impl S2D {
             width,
             height,
             time: 0,
-            background: Color::from([0x48, 0xb2, 0xe8, 0xff]),
+            background: Color::from([0xff, 0xff, 0xff, 0xff]),
         }
     }
 }

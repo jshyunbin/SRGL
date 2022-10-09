@@ -9,3 +9,4 @@ publish = false
 
 [dependencies]
 srgl = { path = "../.." }
+nalgebra = "*"

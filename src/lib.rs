@@ -1,5 +1,7 @@
 
 pub use pixels::Error;
+pub use crate::renderers::s2d::Shape;
+pub use crate::renderers::*;
 use renderers::{Renderer, Render};
 use renderers::s2d::S2D;
 use renderers::s3d::S3D;
@@ -10,7 +12,6 @@ use winit::event_loop::{ControlFlow, EventLoop};
 use winit::window::{Window, WindowBuilder};
 use winit::window::CursorIcon;
 use winit_input_helper::WinitInputHelper;
-use crate::renderers::s2d::Shape;
 
 mod renderers;
 
