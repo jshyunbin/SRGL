@@ -9,6 +9,7 @@ pub struct S2D {
     shapes: Vec<Shape>,
     width: u32,
     height: u32,
+    time: u32,
 }
 
 impl Render for S2D {
@@ -18,6 +19,7 @@ impl Render for S2D {
             let y = (i / self.width as usize) as i16;
 
             pixel.copy_from_slice(&[0x48, 0xb2, 0xe8, 0xff]);
+            // time += 1;
         }
     }
 }
@@ -28,6 +30,13 @@ impl S2D {
             shapes: vec![],
             width: width,
             height: height,
+            time: 0,
         }
+    }
+
+    // todo
+    pub fn addShape(mut self, shape: Shape) -> Self {
+        self.shapes;
+        self
     }
 }
