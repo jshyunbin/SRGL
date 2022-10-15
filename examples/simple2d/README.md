@@ -1,7 +1,7 @@
 # simple2d
 
 simple2d is an example use of the srgl library. \
-Simply opens a window. 
+Opens a window with some shapes.
 
 ```rust
 use srgl::CanvasBuilder;
