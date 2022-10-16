@@ -16,7 +16,7 @@ fn main() -> Result<(), srgl::Error> {
 
 ## Usage
 
-**SRGL** is designed to be as simple and easy to use even for non-programmers. You can open an empty window with just 
+**SRGL** is designed to be as simple and easy to use. You can open an empty window with just 
 few lines of code!
 
 
@@ -32,7 +32,7 @@ features are still work in progress.
  - create vertices, polygons (wip)
  - ray tracing (wip)
  - keyboard/mouse interface (wip)
- - frame control (wip)
+ - frame rate control (wip)
 
 ## Examples
 
