@@ -1,5 +1,5 @@
 [package]
-name = "simple2d"
+name = "simple-window"
 version = "0.1.0"
 authors = ["Joshua Hyunbin Lee"]
 edition = "2021"
@@ -9,4 +9,3 @@ publish = false
 
 [dependencies]
 srgl = { path = "../.." }
-nalgebra = "*"

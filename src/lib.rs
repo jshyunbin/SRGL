@@ -1,10 +1,11 @@
 
 pub use pixels::Error;
-use render::{Render, Rend};
-use render::s2d::S2D;
-use render::s3d::S3D;
+pub use crate::renderers::s2d::Shape;
+pub use crate::renderers::*;
+use renderers::{Renderer, Render};
+use renderers::s2d::S2D;
+use renderers::s3d::S3D;
 use pixels::{Pixels, SurfaceTexture};
-use pixels::Error::Surface;
 use winit::dpi::LogicalSize;
 use winit::event::{Event, VirtualKeyCode};
 use winit::event_loop::{ControlFlow, EventLoop};
@@ -12,11 +13,11 @@ use winit::window::{Window, WindowBuilder};
 use winit::window::CursorIcon;
 use winit_input_helper::WinitInputHelper;
 
-mod render;
+mod renderers;
 
 
 pub enum RenderType {
-    S2D,
+    S2D(Shape),
     S3D,
 }
 
@@ -40,7 +41,7 @@ impl Default for CanvasAttributes {
             height: None,
             title: String::from(""),
             frame_rate: None,
-            render: RenderType::S2D,
+            render: RenderType::S2D(Shape::Shapes(vec![])),
         }
     }
 }
@@ -61,6 +62,11 @@ impl CanvasBuilder {
         self
     }
 
+    pub fn with_s2d(mut self, shape: Shape) -> Self {
+        self.canvas.render = RenderType::S2D(shape);
+        self
+    }
+
     pub fn with_s3d(mut self) -> Self {
         self.canvas.render = RenderType::S3D;
         self
@@ -74,8 +80,8 @@ impl CanvasBuilder {
             height: h,
             title: self.canvas.title,
             render: match self.canvas.render {
-                RenderType::S2D => Render::S2D(S2D::new(w, h)),
-                RenderType::S3D => Render::S3D(S3D::new(w, h)),
+                RenderType::S2D(shape) => Renderer::S2D(S2D::new(w, h, shape)),
+                RenderType::S3D => Renderer::S3D(S3D::new(w, h)),
             }
         }
     }
@@ -85,7 +91,7 @@ pub struct Canvas {
     width: u32,
     height: u32,
     title: String,
-    render: Render,
+    render: Renderer,
 }
 
 impl Canvas {
@@ -115,7 +121,7 @@ impl Canvas {
                 self.render.render(pixels.get_frame());
                 if pixels
                     .render()
-                    .map_err(|e| panic!("pixels.render() failed: {e}"))
+                    .map_err(|e| panic!("pixels.renderers() failed: {e}"))
                     .is_err()
                 {
                     *control_flow = ControlFlow::Exit;

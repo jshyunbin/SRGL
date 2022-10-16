@@ -1,4 +1,4 @@
-use crate::render::Rend;
+use crate::renderers::Render;
 use pixels::wgpu::Color;
 
 pub struct S3D {
@@ -6,7 +6,7 @@ pub struct S3D {
     height: u32,
 }
 
-impl Rend for S3D {
+impl Render for S3D {
     fn render(&self, screen: &mut [u8]) {
         for (i, pixel) in screen.chunks_exact_mut(4).enumerate() {
             let x = (i % self.width as usize) as i16;
