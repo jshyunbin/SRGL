@@ -21,8 +21,16 @@ impl Color {
         }
     }
 
+    pub const BLACK: Color = Self::new(0, 0, 0, 0xff);
+    
+    pub const WHITE: Color = Self::new(0xff, 0xff, 0xff, 0xff);
+
     pub fn from(color: [u8; 4]) -> Self {
         Self::new(color[0], color[1], color[2], color[3])
+    }
+
+    pub fn rgb(r: u8, g: u8, b: u8) -> Self {
+        Self::new(r, g, b, 0xff)
     }
 
     pub fn to_array(self) -> [u8; 4] {

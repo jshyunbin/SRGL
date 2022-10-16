@@ -13,13 +13,43 @@ pub enum Shape {
 
 
 impl Shape {
-    pub fn make_rect(start: Vector3<f64>, end: Vector3<f64>, color: Color) -> Self {
+    pub fn make_line(x1: f64, y1: f64, x2: f64, y2: f64) -> Self {
+        Shape::Line(LineShape{
+            start: Vector3::new(x1, y1, 0.),
+            end: Vector3::new(x2, y2, 0.),
+            stroke_color: Color::BLACK,
+            stroke_weight: 1.,
+        })
+    }
+
+    pub fn make_circle(x: f64, y: f64, r: f64) -> Self {
+        Shape::Circle(CircleShape{
+            coord: Vector3::new(x, y, 0.),
+            radius: r,
+            color: Color::BLACK,
+            stroke: false,
+            stroke_color: Color::BLACK,
+            stroke_weight: 1.,
+        })
+    }
+
+    pub fn make_rect(x1: f64, y1: f64, x2: f64, y2: f64, color: Color) -> Self {
         Shape::Rect(RectShape{
-            start,
-            end,
+            start: Vector3::new(x1, y1, 0.),
+            end: Vector3::new(x2, y2, 0.),
             color,
             stroke: false,
             stroke_color: color,
+            stroke_weight: 1.,
+        })
+    }
+
+    pub fn make_shape(vertices: Vec<(f64, f64)>) -> Self {
+        Shape::Vertices(ClosedShape{
+            vertices: vertices.iter().map(|&x| Vector3::new(x[0], x[1], 0)).collect::<Vec<_>>(),
+            color: Color::BLACK,
+            stroke: false,
+            stroke_color: Color::BLACK,
             stroke_weight: 1.,
         })
     }
@@ -40,7 +70,9 @@ impl Shape {
 
         match self {
             Shape::Point(point) => (),
-            Shape::Line(line) => (),
+            Shape::Line(line) => {
+
+            },
             Shape::Circle(circle) => (),
             Shape::Rect(rect) => {
                 for x in rect.start[0] as usize..rect.end[0] as usize {
@@ -99,7 +131,7 @@ pub struct RectShape {
 
 #[derive(Copy, Clone)]
 pub struct ClosedShape {
-    vertices: Vector3<f64>,
+    vertices: Vec<Vector3<f64>>,
     color: Color,
     stroke: bool,
     stroke_color: Color,
