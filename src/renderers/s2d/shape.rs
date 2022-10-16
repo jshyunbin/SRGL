@@ -66,12 +66,24 @@ impl Shape {
         }
     }
 
-    pub fn draw(&self, screen: &mut Vec<Vec<Color>>, width: usize) {
+    // todo: implement transform functions
+    // scale, translate, rotate
 
+    pub fn draw(&self, screen: &mut Vec<Vec<Color>>) {
         match self {
-            Shape::Point(point) => (),
+            Shape::Point(point) => {
+                screen[point.coord[0] as usize][point.coord[1] as usize] = point.point_color;
+            },
             Shape::Line(line) => {
-
+                for x in line.start[0] as usize..line.end[0] as usize {
+                    let a = (line.start[1] - line.end[1]) / (line.start[0] - line.end[0]);
+                    let b = line.start[1] - a * line.start[0];
+                    let y = (a * x + b) as usize;
+                    if x >= screen.len() || y >= screen[0].len() {
+                        break;
+                    }
+                    screen[x][y] = line.stroke_color;
+                }
             },
             Shape::Circle(circle) => (),
             Shape::Rect(rect) => {
@@ -87,7 +99,7 @@ impl Shape {
             Shape::Vertices(vertices) => (),
             Shape::Shapes(shapes) => {
                 for shape in shapes {
-                    shape.draw(screen, width);
+                    shape.draw(screen);
                 }
             }
         }

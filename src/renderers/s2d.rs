@@ -18,7 +18,7 @@ impl Render for S2D {
     fn render(&self, screen: &mut [u8]) {
         let mut pixels = vec![vec![self.background; self.height as usize]; self.width as usize];
 
-        self.shape.draw(&mut pixels, self.width as usize);
+        self.shape.draw(&mut pixels);
 
         for (i, pixel) in screen.chunks_exact_mut(4).enumerate() {
             let x = (i % self.width as usize);
