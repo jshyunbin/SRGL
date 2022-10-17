@@ -21,8 +21,8 @@ impl Render for S2D {
         self.shape.draw(&mut pixels);
 
         for (i, pixel) in screen.chunks_exact_mut(4).enumerate() {
-            let x = (i % self.width as usize);
-            let y = (i / self.width as usize);
+            let x = i % self.width as usize;
+            let y = i / self.width as usize;
 
             pixel.copy_from_slice(&pixels[x][y].to_array());
             // time += 1;

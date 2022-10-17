@@ -29,7 +29,7 @@ impl Color {
         Self::new(color[0], color[1], color[2], color[3])
     }
 
-    pub fn rgb(r: u8, g: u8, b: u8) -> Self {
+    pub fn from_rgb(r: u8, g: u8, b: u8) -> Self {
         Self::new(r, g, b, 0xff)
     }
 
