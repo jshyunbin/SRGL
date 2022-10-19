@@ -19,6 +19,7 @@ mod renderers;
 pub enum RenderType {
     S2D(Shape),
     S3D,
+    SRT,
 }
 
 #[derive(Default)]
