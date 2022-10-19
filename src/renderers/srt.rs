@@ -20,9 +20,9 @@ pub struct SRT {
 }
 
 impl SRT {
-    pub fn new(width: u32, height: u32, objects: Vec<Objects>) -> Self {
+    pub fn new(width: u32, height: u32) -> Self {
         Self {
-            objects,
+            objects: vec![],
             width,
             height,
             background: Color::from([0xff, 0xff, 0xff, 0xff]),
@@ -44,6 +44,10 @@ impl SRT {
         self.uvw = [Vector3::from(u), Vector3::from(v), Vector3::from(w)];
     }
 
+    pub fn add_object(&mut self, object: Objects) {
+        self.objects.push(object);
+    }
+
 
     pub fn render(&self, screen: &mut [u8]) {
 
@@ -61,7 +65,7 @@ impl SRT {
             eye_ray += self.uvw[0] * u;
             eye_ray += self.uvw[1] * v;
             eye_ray += self.uvw[2] * -d;
-            
+
             let eye_ray = Ray::from_vector(self.eye, eye_ray);
 
             pixel.copy_from_slice(&eye_ray.get_color(&self.objects, 1).to_array());
