@@ -1,4 +1,4 @@
-
+use nalgebra::Vector3;
 use crate::renderers::Color;
 use crate::srt::objects::Objects;
 
@@ -12,6 +12,9 @@ pub struct SRT {
     width: u32,
     height: u32,
     background: Color,
+    eye: Vector3<f64>,
+    fov: f64,
+    uvw: [Vector3<f64>; 3],
 }
 
 impl SRT {
@@ -21,7 +24,23 @@ impl SRT {
             width,
             height,
             background: Color::from([0xff, 0xff, 0xff, 0xff]),
+            eye: Vector3::new(0., 0., 0.),
+            fov: 60.,
+            uvw: [Vector3::new(1., 0., 0.), Vector3::new(0., 1., 0.),
+                    Vector3::new(0., 0., 1.)],
         }
+    }
+
+    pub fn set_eye(&mut self, x: f64, y: f64, z: f64) {
+        self.eye = Vector3::new(x, y, z);
+    }
+
+    pub fn set_fov(&mut self, fov: f64) {
+        self.fov = fov;
+    }
+
+    pub fn set_uvw(&mut self, u: [f64; 3], v: [f64; 3], w: [f64; 3]) {
+        self.uvw = [Vector3::from(u), Vector3::from(v), Vector3::from(w)];
     }
 
 
