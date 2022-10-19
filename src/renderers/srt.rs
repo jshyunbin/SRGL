@@ -1,6 +1,8 @@
-use nalgebra::Vector3;
+use std::f64::consts::PI;
+use nalgebra::{vector, Vector3};
 use crate::renderers::Color;
 use crate::srt::objects::Objects;
+use crate::srt::ray::Ray;
 
 mod objects;
 mod ray;
@@ -24,15 +26,14 @@ impl SRT {
             width,
             height,
             background: Color::from([0xff, 0xff, 0xff, 0xff]),
-            eye: Vector3::new(0., 0., 0.),
+            eye: vector![0., 0., 0.],
             fov: 60.,
-            uvw: [Vector3::new(1., 0., 0.), Vector3::new(0., 1., 0.),
-                    Vector3::new(0., 0., 1.)],
+            uvw: [vector![1., 0., 0.], vector![0., 1., 0.], vector![0., 0., 1.]],
         }
     }
 
     pub fn set_eye(&mut self, x: f64, y: f64, z: f64) {
-        self.eye = Vector3::new(x, y, z);
+        self.eye = vector![x, y, z];
     }
 
     pub fn set_fov(&mut self, fov: f64) {
@@ -51,9 +52,19 @@ impl SRT {
             let y = i / self.width as usize;
 
             // calculate view rays here
+            let u = 2. * x as f64 / self.width as f64 - 1.;
+            let v = 2. * y as f64 / self.height as f64 - 1.;
+            let d = 2. / (self.fov * PI / 360.).tan();
 
-            pixel.copy_from_slice(&self.background.to_array());
-            // time += 1;
+            let mut eye_ray = vector![0., 0., 0.];
+
+            eye_ray += self.uvw[0] * u;
+            eye_ray += self.uvw[1] * v;
+            eye_ray += self.uvw[2] * -d;
+            
+            let eye_ray = Ray::from_vector(self.eye, eye_ray);
+
+            pixel.copy_from_slice(&eye_ray.get_color(&self.objects, 1).to_array());
         }
     }
 }
