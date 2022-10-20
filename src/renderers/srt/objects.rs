@@ -1,5 +1,6 @@
 use nalgebra::Vector3;
 use crate::{Color, Shape};
+use crate::srt::ray::Ray;
 
 
 pub struct Surface {
@@ -54,6 +55,28 @@ impl Objects {
         })
     }
 
+    pub fn hit(&self, ray: &Ray) -> Option<(f64, f64)> {
+        match self {
+            Self::Sphere(sphere) => {
+                let a = ray.get_direction().norm_squared();
+                let b = 2. * ray.get_direction().dot(&(ray.get_start_pos() - sphere.position));
+                let c = (ray.get_start_pos() - sphere.position).norm_squared() - sphere.radius.powi(2);
+                let d = b * b - 4. * a * c;
+                if d < 0. {
+                    None
+                } else {
+                    let d = d.sqrt();
+                    let r1= (-b-d)/(2.*a);
+                    let r2= (-b+d)/(2.*a);
+                    Some((r1, r2))
+                }
+            },
+            Self::Triangle(triangle) => None,
+            Self::Cylinder(cylinder) => None,
+            Self::Cone(cone) => None,
+            Self::Box(box_) => None,
+        }
+    }
 }
 
 pub struct SphereObj {
