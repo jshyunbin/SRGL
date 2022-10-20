@@ -22,7 +22,33 @@ impl Ray {
         }
     }
 
+    pub fn get_direction(&self) -> Vector3<f64> {
+        self.direction
+    }
+
+    pub fn get_start_pos(&self) -> Vector3<f64> {
+        self.origin
+    }
+
+    pub fn get_end_pos(&self) -> Vector3<f64> {
+        self.origin + self.direction
+    }
+
+    pub fn get_t_pos(&self, t: f64) -> Vector3<f64> {
+        self.origin + t * self.direction
+    }
+
     pub fn get_color(&self, objects: &Vec<Objects>, iter: u32) -> Color {
-        Color::from([0xff, 0xff, 0xff, 0xff])
+        if iter == 0 {
+            Color::rgb(0, 0, 0)
+        } else {
+            let mut pos: Vector3<f64>;
+            let mut closest_obj: &Objects;
+            for object in objects {
+                let t = object.hit(self);
+
+            }
+            Color::rgb(0, 0, 0)
+        }
     }
 }
