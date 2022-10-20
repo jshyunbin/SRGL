@@ -153,6 +153,7 @@ impl Canvas {
                 window.request_redraw();
             }
         });
-
     }
+    
+    
 }

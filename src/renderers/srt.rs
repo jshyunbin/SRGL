@@ -3,14 +3,16 @@ use nalgebra::{vector, Vector3};
 use crate::renderers::Color;
 use crate::srt::objects::Objects;
 use crate::srt::ray::Ray;
+use crate::srt::light::Light;
 
-mod objects;
-mod ray;
-mod light;
+pub mod objects;
+pub mod ray;
+pub mod light;
 
 
 pub struct SRT {
     objects: Vec<Objects>,
+    lights: Vec<Light>,
     width: u32,
     height: u32,
     background: Color,
@@ -23,6 +25,7 @@ impl SRT {
     pub fn new(width: u32, height: u32) -> Self {
         Self {
             objects: vec![],
+            lights: vec![],
             width,
             height,
             background: Color::from([0xff, 0xff, 0xff, 0xff]),
@@ -48,6 +51,9 @@ impl SRT {
         self.objects.push(object);
     }
 
+    pub fn add_light(&mut self, light: Light) {
+        self.lights.push(light)
+    }
 
     pub fn render(&self, screen: &mut [u8]) {
 

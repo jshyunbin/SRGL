@@ -1,5 +1,8 @@
 // pub use pixels;
 
+use nalgebra::{vector, Vector3};
+use crate::srt::objects::Objects;
+
 pub mod s2d;
 pub mod s3d;
 pub mod srt;
@@ -53,4 +56,36 @@ impl Renderer {
             Renderer::SRT(srt) => srt.render(screen),
         };
     }
+
+    // pub fn set_eye(&mut self, x: f64, y: f64, z: f64) {
+    //     match self {
+    //         Renderer::S2D(s2d) => (),
+    //         Renderer::S3D(s3d) => (),
+    //         Renderer::SRT(srt) => srt.set_eye(x, y, z)
+    //     }
+    // }
+    //
+    // pub fn set_fov(&mut self, fov: f64) {
+    //     match self {
+    //         Renderer::S2D(s2d) => (),
+    //         Renderer::S3D(s3d) => (),
+    //         Renderer::SRT(srt) => srt.set_fov(fov)
+    //     }
+    // }
+    //
+    // pub fn set_uvw(&mut self, u: [f64; 3], v: [f64; 3], w: [f64; 3]) {
+    //     match self {
+    //         Renderer::S2D(s2d) => (),
+    //         Renderer::S3D(s3d) => (),
+    //         Renderer::SRT(srt) => srt.set_uvw(u, v, w)
+    //     }
+    // }
+    //
+    // pub fn add_object(&mut self, object: Objects) {
+    //     match self {
+    //         Renderer::S2D(s2d) => (),
+    //         Renderer::S3D(s3d) => (),
+    //         Renderer::SRT(srt) => srt.add_object(object)
+    //     }
+    // }
 }

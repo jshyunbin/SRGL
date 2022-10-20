@@ -48,7 +48,7 @@ pub enum Objects {
 impl Objects {
     pub fn make_sphere(x: f64, y: f64, z: f64, r: f64, surface: Surface) -> Self {
         Self::Sphere(SphereObj{
-            pos: Vector3::new(x, y, z),
+            position: Vector3::new(x, y, z),
             radius: r,
             surface,
         })
@@ -57,7 +57,7 @@ impl Objects {
 }
 
 pub struct SphereObj {
-    pos: Vector3<f64>,
+    position: Vector3<f64>,
     radius: f64,
     surface: Surface,
 }
