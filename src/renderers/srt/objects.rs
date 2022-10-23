@@ -1,4 +1,4 @@
-use nalgebra::Vector3;
+use nalgebra::{vector, Vector3};
 use crate::{Color, Shape};
 use crate::srt::ray::Ray;
 
@@ -55,7 +55,9 @@ impl Objects {
         })
     }
 
-    pub fn hit(&self, ray: &Ray) -> Option<(f64, f64)> {
+    // return t value of first hit position and normalized normal vector
+    //
+    pub fn hit(&self, ray: &Ray) -> Option<(f64, Vector3<f64>)> {
         match self {
             Self::Sphere(sphere) => {
                 let a = ray.get_direction().norm_squared();
@@ -68,13 +70,48 @@ impl Objects {
                     let d = d.sqrt();
                     let r1= (-b-d)/(2.*a);
                     let r2= (-b+d)/(2.*a);
-                    Some((r1, r2))
+                    if r1 > 0. {
+                        let pos = ray.get_t_pos(r1);
+                        Some((r1, (pos - sphere.position).normalize()))
+                    } else {
+                        None
+                    }
                 }
             },
             Self::Triangle(triangle) => None,
             Self::Cylinder(cylinder) => None,
             Self::Cone(cone) => None,
             Self::Box(box_) => None,
+        }
+    }
+
+    pub fn get_ambient(&self) -> Vector3<f64> {
+        match self {
+            Self::Sphere(sphere) => sphere.surface.ambient,
+            Self::Triangle(triangle) => vector![0., 0., 0.],
+            Self::Cylinder(cylinder) => vector![0., 0., 0.],
+            Self::Cone(cone) => vector![0., 0., 0.],
+            Self::Box(box_) => vector![0., 0., 0.],
+        }
+    }
+
+    pub fn get_diffuse(&self) -> Vector3<f64> {
+        match self {
+            Self::Sphere(sphere) => sphere.surface.diffuse,
+            Self::Triangle(triangle) => vector![0., 0., 0.],
+            Self::Cylinder(cylinder) => vector![0., 0., 0.],
+            Self::Cone(cone) => vector![0., 0., 0.],
+            Self::Box(box_) => vector![0., 0., 0.],
+        }
+    }
+
+    pub fn get_specular(&self) -> Vector3<f64> {
+        match self {
+            Self::Sphere(sphere) => sphere.surface.specular,
+            Self::Triangle(triangle) => vector![0., 0., 0.],
+            Self::Cylinder(cylinder) => vector![0., 0., 0.],
+            Self::Cone(cone) => vector![0., 0., 0.],
+            Self::Box(box_) => vector![0., 0., 0.],
         }
     }
 }

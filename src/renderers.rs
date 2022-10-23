@@ -37,6 +37,16 @@ impl Color {
         Self::new(r, g, b, 0xff)
     }
 
+    pub fn from_vector(color: Vector3<f64>) -> Self {
+        let color = color * 256.;
+        Self::new(color[0] as u8, color[1] as u8, color[2] as u8, 0xff)
+    }
+
+    pub fn to_vector(&self) -> Vector3<f64> {
+        vector![(self.r as f64) / 256., (self.g as f64) / 256., (self.b as f64) / 256.]
+    }
+
+
     pub fn to_array(self) -> [u8; 4] {
         [self.r, self.g, self.b, self.a]
     }

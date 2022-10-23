@@ -1,6 +1,7 @@
-use nalgebra::Vector3;
+use nalgebra::{vector, Vector3};
 use crate::Color;
 use crate::srt::objects::Objects;
+use crate::srt::light::Light;
 
 pub struct Ray {
     origin: Vector3<f64>,
@@ -26,6 +27,10 @@ impl Ray {
         self.direction
     }
 
+    pub fn get_direction_norm(&self) -> Vector3<f64> {
+        self.direction.normalize()
+    }
+
     pub fn get_start_pos(&self) -> Vector3<f64> {
         self.origin
     }
@@ -38,17 +43,49 @@ impl Ray {
         self.origin + t * self.direction
     }
 
-    pub fn get_color(&self, objects: &Vec<Objects>, iter: u32) -> Color {
+    pub fn get_color(&self, objects: &Vec<Objects>, lights: &Vec<Light>, iter: u32) -> Option<Color> {
         if iter == 0 {
-            Color::rgb(0, 0, 0)
+            None
         } else {
-            let mut pos: Vector3<f64>;
-            let mut closest_obj: &Objects;
+            let mut mint: f64 = 0.;
+            let mut minn: Vector3<f64> = vector![0., 0., 0.];
+            let mut closest_obj: Option<&Objects> = None;
             for object in objects {
                 let t = object.hit(self);
-
+                if let Some(hitt) = t {
+                    let (hitp, hitn) = hitt;
+                    if t.is_none() || mint > hitp {
+                        mint = hitp;
+                        minn = hitn;
+                        closest_obj = Some(object);
+                    }
+                }
             }
-            Color::rgb(0, 0, 0)
+            if closest_obj.is_none() {
+                None
+            } else {
+                let closest_obj = closest_obj.unwrap();
+                let pos = self.get_t_pos(mint);
+
+                let mut amb: Vector3<f64> = vector![0., 0., 0.];
+
+                let mut dif: Vector3<f64> = vector![0., 0., 0.];
+                for l in lights {
+                    let cl = l.get_color_vector();
+                    let cr = closest_obj.get_diffuse();
+                    let ldir = (pos - l.get_position()).normalize();
+                    dif += cl.component_mul(&cr) * f64::max(-ldir.dot(&minn), 0.);
+                }
+
+
+                let mut spc: Vector3<f64> = vector![0., 0., 0.];
+
+
+
+                let c: Vector3<f64> = amb + dif + spc;
+
+                Some(Color::from_vector(c))
+            }
         }
     }
 }
