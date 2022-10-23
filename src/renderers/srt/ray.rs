@@ -51,10 +51,10 @@ impl Ray {
             let mut minn: Vector3<f64> = vector![0., 0., 0.];
             let mut closest_obj: Option<&Objects> = None;
             for object in objects {
-                let t = object.hit(self);
-                if let Some(hitt) = t {
+                let hit = object.hit(self);
+                if let Some(hitt) = hit {
                     let (hitp, hitn) = hitt;
-                    if t.is_none() || mint > hitp {
+                    if closest_obj.is_none() || mint > hitp {
                         mint = hitp;
                         minn = hitn;
                         closest_obj = Some(object);

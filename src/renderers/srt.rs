@@ -1,7 +1,7 @@
 use std::f64::consts::PI;
 use nalgebra::{vector, Vector3};
 use crate::renderers::Color;
-use crate::srt::objects::Objects;
+use crate::srt::objects::{Objects, SphereObj, Surface};
 use crate::srt::ray::Ray;
 use crate::srt::light::Light;
 
@@ -35,6 +35,21 @@ impl SRT {
         }
     }
 
+    // only for debugging; remove for release
+    pub fn example(width: u32, height: u32) -> Self {
+        Self {
+            objects: vec![Objects::make_sphere(0.8, 0.2, -7., 0.4, Surface::SHINY),
+                          Objects::make_sphere(-0.8, 0.2, -7., 0.4, Surface::SHINY)],
+            lights: vec![Light::new(8., 8., 3., Color::rgb(178, 178, 178))],
+            width,
+            height,
+            background: Color::rgb(155, 255, 255),
+            eye: vector![0., 0., 0.],
+            fov: 60.,
+            uvw: [vector![1., 0., 0.], vector![0., 1., 0.], vector![0., 0., 1.]],
+        }
+    }
+
     pub fn set_eye(&mut self, x: f64, y: f64, z: f64) {
         self.eye = vector![x, y, z];
     }
@@ -60,6 +75,7 @@ impl SRT {
         for (i, pixel) in screen.chunks_exact_mut(4).enumerate() {
             let x = i % self.width as usize;
             let y = i / self.width as usize;
+            let y = self.height as usize - y - 1;
 
             // calculate view rays here
             let u = 2. * x as f64 / self.width as f64 - 1.;
@@ -73,6 +89,7 @@ impl SRT {
             eye_ray += self.uvw[2] * -d;
 
             let eye_ray = Ray::from_vector(self.eye, eye_ray);
+
 
             pixel.copy_from_slice(&eye_ray.get_color(&self.objects, &self.lights, 1)
                 .unwrap_or(self.background).to_array());
