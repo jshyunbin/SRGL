@@ -79,7 +79,13 @@ impl Ray {
 
 
                 let mut spc: Vector3<f64> = vector![0., 0., 0.];
-
+                for l in lights {
+                    let cl = l.get_color_vector();
+                    let cp = closest_obj.get_specular();
+                    let p = closest_obj.get_spec_power();
+                    let ldir = (pos - l.get_position()).normalize();
+                    spc += cl.component_mul(&cp) * (ldir - minn).normalize().dot(&minn).powf(p);
+                }
 
 
                 let c: Vector3<f64> = amb + dif + spc;

@@ -114,6 +114,16 @@ impl Objects {
             Self::Box(box_) => vector![0., 0., 0.],
         }
     }
+
+    pub fn get_spec_power(&self) -> f64 {
+        match self {
+            Self::Sphere(sphere) => sphere.surface.spec_power,
+            Self::Triangle(triangle) => 0.,
+            Self::Cylinder(cylinder) => 0.,
+            Self::Cone(cone) => 0.,
+            Self::Box(box_) => 0.,
+        }
+    }
 }
 
 pub struct SphereObj {
