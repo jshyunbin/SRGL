@@ -124,6 +124,16 @@ impl Objects {
             Self::Box(box_) => 0.,
         }
     }
+
+    pub fn get_k_refl(&self) -> f64 {
+        match self {
+            Self::Sphere(sphere) => sphere.surface.k_refl,
+            Self::Triangle(triangle) => 0.,
+            Self::Cylinder(cylinder) => 0.,
+            Self::Cone(cone) => 0.,
+            Self::Box(box_) => 0.,
+        }
+    }
 }
 
 pub struct SphereObj {

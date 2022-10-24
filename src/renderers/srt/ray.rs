@@ -43,7 +43,8 @@ impl Ray {
         self.origin + t * self.direction
     }
 
-    pub fn get_color(&self, objects: &Vec<Objects>, lights: &Vec<Light>, iter: u32) -> Option<Color> {
+    pub fn get_color(&self, objects: &Vec<Objects>, lights: &Vec<Light>,
+                     amb_light: &Vector3<f64>, iter: u32) -> Option<Color> {
         if iter == 0 {
             None
         } else {
@@ -67,7 +68,7 @@ impl Ray {
                 let closest_obj = closest_obj.unwrap();
                 let pos = self.get_t_pos(mint);
 
-                let mut amb: Vector3<f64> = vector![0., 0., 0.];
+                let amb: Vector3<f64> = closest_obj.get_ambient().component_mul(&amb_light);
 
                 let mut dif: Vector3<f64> = vector![0., 0., 0.];
                 for l in lights {
@@ -87,8 +88,13 @@ impl Ray {
                     spc += cl.component_mul(&cp) * (ldir - minn).normalize().dot(&minn).powf(p);
                 }
 
+                let dir = -self.get_direction();
+                let refl = minn * (2. * dir.dot(&minn)) - dir;
+                let refl_color = Ray::from_vector(pos, refl)
+                    .get_color(objects, lights, amb_light, iter-1);
+                let refl_color = refl_color.unwrap_or(Color::rgb(0, 0, 0)).to_vector();
 
-                let c: Vector3<f64> = amb + dif + spc;
+                let c: Vector3<f64> = amb + dif + spc + closest_obj.get_k_refl() * refl_color;
 
                 Some(Color::from_vector(c))
             }

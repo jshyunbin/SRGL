@@ -39,7 +39,7 @@ impl SRT {
     pub fn example(width: u32, height: u32) -> Self {
         Self {
             objects: vec![Objects::make_sphere(0.8, 0.2, -7., 0.4, Surface::SHINY),
-                          Objects::make_sphere(-0.8, 0.2, -7., 0.4, Surface::SHINY)],
+                          Objects::make_sphere(-0.8, 0.2, -7., 0.8, Surface::SHINY)],
             lights: vec![Light::new(8., 8., 3., Color::rgb(178, 178, 178))],
             width,
             height,
@@ -91,7 +91,8 @@ impl SRT {
             let eye_ray = Ray::from_vector(self.eye, eye_ray);
 
 
-            pixel.copy_from_slice(&eye_ray.get_color(&self.objects, &self.lights, 1)
+            pixel.copy_from_slice(&eye_ray.get_color(&self.objects, &self.lights,
+                                                     &self.background.to_vector(), 3)
                 .unwrap_or(self.background).to_array());
         }
     }
