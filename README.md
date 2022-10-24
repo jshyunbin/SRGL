@@ -29,8 +29,8 @@ features are still work in progress.
  - anti-aliasing (wip)
  - 3D rendering (wip)
  - shading (Flat, Gouraud, Phong) (wip)
- - create vertices, polygons (wip)
- - ray tracing (wip)
+ - ray tracing
+ - save img files (wip)
 
 ## Examples
 
