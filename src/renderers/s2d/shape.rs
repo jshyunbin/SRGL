@@ -46,7 +46,7 @@ impl Shape {
 
     pub fn make_shape(vertices: Vec<(f64, f64)>) -> Self {
         Shape::Vertices(ClosedShape{
-            vertices: vertices.iter().map(|&x| Vector3::new(x[0], x[1], 0)).collect::<Vec<_>>(),
+            vertices: vertices.iter().map(|&x| Vector3::new(x.0, x.1, 0.)).collect::<Vec<_>>(),
             color: Color::BLACK,
             stroke: false,
             stroke_color: Color::BLACK,
@@ -78,7 +78,7 @@ impl Shape {
                 for x in line.start[0] as usize..line.end[0] as usize {
                     let a = (line.start[1] - line.end[1]) / (line.start[0] - line.end[0]);
                     let b = line.start[1] - a * line.start[0];
-                    let y = (a * x + b) as usize;
+                    let y = (a * x as f64 + b) as usize;
                     if x >= screen.len() || y >= screen[0].len() {
                         break;
                     }
@@ -141,7 +141,7 @@ pub struct RectShape {
     stroke_weight: f64,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 pub struct ClosedShape {
     vertices: Vec<Vector3<f64>>,
     color: Color,

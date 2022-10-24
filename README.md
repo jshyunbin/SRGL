@@ -31,13 +31,12 @@ features are still work in progress.
  - shading (Flat, Gouraud, Phong) (wip)
  - create vertices, polygons (wip)
  - ray tracing (wip)
- - keyboard/mouse interface (wip)
- - frame rate control (wip)
 
 ## Examples
 
 Examples are available in `/examples`.
 
-- [Simple-Window](./examples/simple-window)
+- [Simple Window](./examples/simple-window)
 - [Simple2D](./examples/simple2d)
+- [Sphere Ray Tracing](./examples/sphere-rt)
 

@@ -2,9 +2,10 @@
 pub use pixels::Error;
 pub use crate::renderers::s2d::Shape;
 pub use crate::renderers::*;
-use renderers::{Renderer, Render};
+use renderers::Renderer;
 use renderers::s2d::S2D;
 use renderers::s3d::S3D;
+use renderers::srt::SRT;
 use pixels::{Pixels, SurfaceTexture};
 use winit::dpi::LogicalSize;
 use winit::event::{Event, VirtualKeyCode};
@@ -19,6 +20,7 @@ mod renderers;
 pub enum RenderType {
     S2D(Shape),
     S3D,
+    SRT,
 }
 
 #[derive(Default)]
@@ -72,6 +74,11 @@ impl CanvasBuilder {
         self
     }
 
+    pub fn with_rt(mut self) -> Self {
+        self.canvas.render = RenderType::SRT;
+        self
+    }
+
     pub fn build(self) -> Canvas {
         let w = self.canvas.width.expect("Size must be set");
         let h = self.canvas.height.expect("Size must be set");
@@ -82,6 +89,7 @@ impl CanvasBuilder {
             render: match self.canvas.render {
                 RenderType::S2D(shape) => Renderer::S2D(S2D::new(w, h, shape)),
                 RenderType::S3D => Renderer::S3D(S3D::new(w, h)),
+                RenderType::SRT => Renderer::SRT(SRT::example(w, h)),   // todo: change renderer struct
             }
         }
     }
@@ -145,6 +153,7 @@ impl Canvas {
                 window.request_redraw();
             }
         });
-
     }
+
+
 }
