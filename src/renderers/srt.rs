@@ -1,8 +1,8 @@
 use std::f64::consts::PI;
 use nalgebra::{vector, Vector3};
-use crate::{CanvasAttributes, Scene};
+use crate::Scene;
 use crate::renderers::Color;
-use crate::srt::objects::{Objects, SphereObj, Surface};
+use crate::srt::objects::{Objects, Surface};
 use crate::srt::ray::Ray;
 use crate::srt::light::Light;
 

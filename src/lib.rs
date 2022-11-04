@@ -1,4 +1,4 @@
-use nalgebra::{vector, Vector, Vector3};
+use nalgebra::{vector, Vector3};
 pub use pixels::Error;
 pub use crate::renderers::s2d::Shape;
 pub use crate::renderers::*;
