@@ -22,16 +22,17 @@ pub struct SRT {
 }
 
 impl SRT {
-    pub fn new(width: u32, height: u32) -> Self {
+    pub fn new(width: u32, height: u32, objects: Vec<Objects>, lights: Vec<Light>, 
+               background: Color, eye: Vector3<f64>, fov: f64, uvw: [Vector3<f64>; 3]) -> Self {
         Self {
-            objects: vec![],
-            lights: vec![],
+            objects,
+            lights,
             width,
             height,
-            background: Color::from([0xff, 0xff, 0xff, 0xff]),
-            eye: vector![0., 0., 0.],
-            fov: 60.,
-            uvw: [vector![1., 0., 0.], vector![0., 1., 0.], vector![0., 0., 1.]],
+            background,
+            eye,
+            fov,
+            uvw,
         }
     }
 

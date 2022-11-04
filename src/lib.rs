@@ -132,7 +132,7 @@ impl CanvasBuilder {
             render: match self.canvas.render {
                 RenderType::S2D(shape) => Renderer::S2D(S2D::new(w, h, shape)),
                 RenderType::S3D => Renderer::S3D(S3D::new(w, h)),
-                RenderType::SRT => Renderer::SRT(SRT::example(w, h)),   // todo: change renderer struct
+                RenderType::SRT => Renderer::SRT(SRT::example(w, h)),
             }
         }
     }
