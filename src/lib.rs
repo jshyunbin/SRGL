@@ -1,4 +1,4 @@
-
+use nalgebra::{vector, Vector, Vector3};
 pub use pixels::Error;
 pub use crate::renderers::s2d::Shape;
 pub use crate::renderers::*;
@@ -11,8 +11,9 @@ use winit::dpi::LogicalSize;
 use winit::event::{Event, VirtualKeyCode};
 use winit::event_loop::{ControlFlow, EventLoop};
 use winit::window::{Window, WindowBuilder};
-use winit::window::CursorIcon;
 use winit_input_helper::WinitInputHelper;
+use crate::srt::light::Light;
+use crate::srt::objects::Objects;
 
 mod renderers;
 
@@ -34,6 +35,12 @@ pub struct CanvasAttributes {
     pub title: String,
     pub frame_rate: Option<u32>,
     pub render: RenderType,
+    pub objects: Vec<Objects>,
+    pub lights: Vec<Light>,
+    pub background: Color,
+    pub eye: Vector3<f64>,
+    pub fov: f64,
+    pub uvw: [Vector3<f64>; 3],
 }
 
 impl Default for CanvasAttributes {
@@ -44,6 +51,12 @@ impl Default for CanvasAttributes {
             title: String::from(""),
             frame_rate: None,
             render: RenderType::S2D(Shape::Shapes(vec![])),
+            objects: vec![],
+            lights: vec![],
+            background: Color::WHITE,
+            eye: vector![0., 0., 0.],
+            fov: 60.,
+            uvw: [vector![1., 0., 0.], vector![0., 1., 0.], vector![0., 0., 1.]],
         }
     }
 }
@@ -76,6 +89,36 @@ impl CanvasBuilder {
 
     pub fn with_rt(mut self) -> Self {
         self.canvas.render = RenderType::SRT;
+        self
+    }
+
+    pub fn with_objects(mut self, object: Objects) -> Self {
+        self.canvas.objects.push(object);
+        self
+    }
+
+    pub fn with_light(mut self, light: Light) -> Self {
+        self.canvas.lights.push(light);
+        self
+    }
+
+    pub fn set_eye(mut self, x: f64, y: f64, z: f64) -> Self {
+        self.canvas.eye = vector![x, y, z];
+        self
+    }
+
+    pub fn set_fov(mut self, fov: f64) -> Self {
+        self.canvas.fov = fov;
+        self
+    }
+
+    pub fn set_uvw(mut self, u: Vec<f64>, v: Vec<f64>, w: Vec<f64>) -> Self {
+        self.canvas.uvw = [Vector3::from_vec(u), Vector3::from_vec(v), Vector3::from_vec(w)]
+        self
+    }
+
+    pub fn set_background(mut self, bg: Color) -> Self {
+        self.canvas.background = bg;
         self
     }
 
