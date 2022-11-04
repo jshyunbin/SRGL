@@ -9,6 +9,7 @@ use crate::srt::light::Light;
 pub mod objects;
 pub mod ray;
 pub mod light;
+pub mod hit;
 
 
 pub struct SRT {

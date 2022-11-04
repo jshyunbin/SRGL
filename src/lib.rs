@@ -135,6 +135,11 @@ impl CanvasBuilder {
         self.canvas.scene.background = bg;
         self
     }
+    
+    pub fn load_scene(mut self, file_loc: & str) -> Self {
+        // todo: parse file and load scene
+        self
+    }
 
     pub fn build(self) -> Canvas {
         let w = self.canvas.width.expect("Size must be set");
