@@ -1,5 +1,6 @@
 use std::f64::consts::PI;
 use nalgebra::{vector, Vector3};
+use crate::{CanvasAttributes, Scene};
 use crate::renderers::Color;
 use crate::srt::objects::{Objects, SphereObj, Surface};
 use crate::srt::ray::Ray;
@@ -22,32 +23,16 @@ pub struct SRT {
 }
 
 impl SRT {
-    pub fn new(width: u32, height: u32, objects: Vec<Objects>, lights: Vec<Light>, 
-               background: Color, eye: Vector3<f64>, fov: f64, uvw: [Vector3<f64>; 3]) -> Self {
+    pub fn new(width: u32, height: u32, canvas: Scene) -> Self {
         Self {
-            objects,
-            lights,
+            objects: canvas.objects,
+            lights: canvas.lights,
             width,
             height,
-            background,
-            eye,
-            fov,
-            uvw,
-        }
-    }
-
-    // only for debugging; remove for release
-    pub fn example(width: u32, height: u32) -> Self {
-        Self {
-            objects: vec![Objects::make_sphere(0.8, 0.2, -7., 0.4, Surface::SHINY),
-                          Objects::make_sphere(-0.8, 0.2, -7., 0.8, Surface::SHINY)],
-            lights: vec![Light::new(8., 8., 3., Color::rgb(178, 178, 178))],
-            width,
-            height,
-            background: Color::rgb(155, 255, 255),
-            eye: vector![0., 0., 0.],
-            fov: 60.,
-            uvw: [vector![1., 0., 0.], vector![0., 1., 0.], vector![0., 0., 1.]],
+            background: canvas.background,
+            eye: canvas.eye,
+            fov: canvas.fov,
+            uvw: canvas.uvw,
         }
     }
 
