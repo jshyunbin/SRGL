@@ -37,24 +37,60 @@ impl SRT {
         }
     }
 
-    pub fn set_eye(&mut self, x: f64, y: f64, z: f64) {
-        self.eye = vector![x, y, z];
-    }
+    pub fn get_color(&self, ray: &Ray, iter: u32) -> Color {
+        if iter == 0 {
+            Color::rgb(0, 0, 0)
+        } else {
+            let mut mint: f64 = 0.;
+            let mut minn: Vector3<f64> = vector![0., 0., 0.];
+            let mut closest_obj: Option<&Objects> = None;
+            for object in &self.objects {
+                let hit = object.hit(ray);
+                if let Some(hitt) = hit {
+                    let (hitp, hitn) = hitt;
+                    if closest_obj.is_none() || mint > hitp {
+                        mint = hitp;
+                        minn = hitn;
+                        closest_obj = Some(&object);
+                    }
+                }
+            }
+            if closest_obj.is_none() {
+                self.background
+            } else {
+                let closest_obj = closest_obj.unwrap();
+                let pos = ray.get_t_pos(mint);
 
-    pub fn set_fov(&mut self, fov: f64) {
-        self.fov = fov;
-    }
+                let amb: Vector3<f64> = closest_obj.get_ambient();
 
-    pub fn set_uvw(&mut self, u: [f64; 3], v: [f64; 3], w: [f64; 3]) {
-        self.uvw = [Vector3::from(u), Vector3::from(v), Vector3::from(w)];
-    }
+                let mut dif: Vector3<f64> = vector![0., 0., 0.];
+                for l in &self.lights {
+                    let cl = l.get_color_vector();
+                    let cr = closest_obj.get_diffuse();
+                    let ldir = (pos - l.get_position()).normalize();
+                    dif += cl.component_mul(&cr) * f64::max(-ldir.dot(&minn), 0.);
+                }
 
-    pub fn add_object(&mut self, object: Objects) {
-        self.objects.push(object);
-    }
 
-    pub fn add_light(&mut self, light: Light) {
-        self.lights.push(light)
+                let mut spc: Vector3<f64> = vector![0., 0., 0.];
+                for l in &self.lights {
+                    let cl = l.get_color_vector();
+                    let cp = closest_obj.get_specular();
+                    let p = closest_obj.get_spec_power();
+                    let ldir = (pos - l.get_position()).normalize();
+                    spc += cl.component_mul(&cp) * (ldir - minn).normalize().dot(&minn).powf(p);
+                }
+
+                let dir = -ray.get_direction();
+                let refl = minn * (2. * dir.dot(&minn)) - dir;
+                let refl_color = self.get_color(&Ray::from_vector(pos, refl), iter - 1);
+                let refl_color = refl_color.to_vector();
+
+                let c: Vector3<f64> = amb + dif + spc + closest_obj.get_k_refl() * refl_color;
+
+                Color::from_vector(c)
+            }
+        }
     }
 
     pub fn render(&self, screen: &mut [u8]) {
