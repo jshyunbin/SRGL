@@ -5,6 +5,7 @@ pub struct Hit {
     position: Vector3<f64>,
     normal: Vector3<f64>,
     surface: Surface,
+    object_index: u32,
     t: f64,
 }
 

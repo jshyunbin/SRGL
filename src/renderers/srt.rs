@@ -114,9 +114,7 @@ impl SRT {
             let eye_ray = Ray::from_vector(self.eye, eye_ray);
 
 
-            pixel.copy_from_slice(&eye_ray.get_color(&self.objects, &self.lights,
-                                                     &self.background.to_vector(), 3)
-                .unwrap_or(self.background).to_array());
+            pixel.copy_from_slice(&self.get_color(&eye_ray, 3).to_array());
         }
     }
 }
