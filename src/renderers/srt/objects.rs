@@ -23,15 +23,23 @@ impl Surface {
 
     pub const SHINY: Self = Self {
         diffuse: Vector3::new(0.6, 0.6, 0.6),
-        ambient: Vector3::new(0.2, 0.2, 0.2),
+        ambient: Vector3::new(0.1, 0.1, 0.1),
         specular: Vector3::new(0.7, 0.7, 0.7),
         spec_power: 20.,
         k_refl: 0.7,
     };
 
+    pub const SHINY_GREEN: Self = Self {
+        diffuse: Vector3::new(0., 0.5, 0.),
+        ambient: Vector3::new(0., 0.2, 0.),
+        specular: Vector3::new(0.7, 0.7, 0.7),
+        spec_power: 20.,
+        k_refl: 0.,
+    };
+
     pub const MATTE_RED: Self = Self {
-        diffuse: Vector3::new(0.4, 0.1, 0.1),
-        ambient: Vector3::new(0.3, 0., 0.),
+        diffuse: Vector3::new(0.5, 0., 0.),
+        ambient: Vector3::new(0.2, 0., 0.),
         specular: Vector3::new(0., 0., 0.),
         spec_power: 1.,
         k_refl: 0.,
