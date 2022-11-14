@@ -4,6 +4,7 @@ use crate::Scene;
 use crate::renderers::Color;
 use crate::srt::objects::{Objects, Surface};
 use crate::srt::ray::Ray;
+use crate::srt::hit::Hit;
 use crate::srt::light::Light;
 
 pub mod objects;
@@ -41,53 +42,51 @@ impl SRT {
         if iter == 0 {
             Color::rgb(0, 0, 0)
         } else {
-            //todo: change to hit for better implementation
-            let mut mint: f64 = 0.;
-            let mut minn: Vector3<f64> = vector![0., 0., 0.];
-            let mut closest_obj: Option<&Objects> = None;
-            for object in &self.objects {
-                let hit = object.hit(ray);
-                if let Some(hitt) = hit {
-                    let (hitp, hitn) = hitt;
-                    if closest_obj.is_none() || mint > hitp {
-                        mint = hitp;
-                        minn = hitn;
-                        closest_obj = Some(&object);
+            let mut min_hit: Hit = Hit::default();
+            let mut min_exists: bool = false;
+            for i in 0..self.objects.len() {
+                let hit = self.objects[i].hit(ray);
+                if let Some(hit) = hit {
+                    let (hitt, hitn) = hit;
+                    if !min_exists || min_hit.t > hitt {
+                        min_exists = true;
+                        min_hit = Hit::new(hitt, i, hitn);
                     }
                 }
             }
-            if closest_obj.is_none() {
+            if !min_exists {
                 self.background
             } else {
-                let closest_obj = closest_obj.unwrap();
-                let pos = ray.get_t_pos(mint);
+                min_hit.position = ray.get_t_pos(min_hit.t);
+                min_hit.surface = self.objects[min_hit.object_index].get_surface();
 
-                let amb: Vector3<f64> = closest_obj.get_ambient();
+                let amb: Vector3<f64> = self.objects[min_hit.object_index].get_ambient();
 
                 let mut dif: Vector3<f64> = vector![0., 0., 0.];
                 for l in &self.lights {
                     let cl = l.get_color_vector();
-                    let cr = closest_obj.get_diffuse();
-                    let ldir = (pos - l.get_position()).normalize();
-                    dif += cl.component_mul(&cr) * f64::max(-ldir.dot(&minn), 0.);
+                    let cr = min_hit.surface.diffuse;
+                    let ldir = (min_hit.position - l.get_position()).normalize();
+                    dif += cl.component_mul(&cr) * f64::max(-ldir.dot(&min_hit.normal), 0.);
                 }
 
 
                 let mut spc: Vector3<f64> = vector![0., 0., 0.];
                 for l in &self.lights {
                     let cl = l.get_color_vector();
-                    let cp = closest_obj.get_specular();
-                    let p = closest_obj.get_spec_power();
-                    let ldir = (pos - l.get_position()).normalize();
-                    spc += cl.component_mul(&cp) * (ldir - minn).normalize().dot(&minn).powf(p);
+                    let cp = min_hit.surface.specular;
+                    let p = min_hit.surface.spec_power;
+                    let ldir = (min_hit.position - l.get_position()).normalize();
+                    spc += cl.component_mul(&cp) * (ldir - min_hit.normal).normalize()
+                        .dot(&min_hit.normal).powf(p);
                 }
 
                 let dir = -ray.get_direction();
-                let refl = minn * (2. * dir.dot(&minn)) - dir;
-                let refl_color = self.get_color(&Ray::from_vector(pos, refl), iter - 1);
+                let refl = min_hit.normal * (2. * dir.dot(&min_hit.normal)) - dir;
+                let refl_color = self.get_color(&Ray::from_vector(min_hit.position, refl), iter - 1);
                 let refl_color = refl_color.to_vector();
 
-                let c: Vector3<f64> = amb + dif + spc + closest_obj.get_k_refl() * refl_color;
+                let c: Vector3<f64> = amb + dif + spc + min_hit.surface.k_refl * refl_color;
 
                 Color::from_vector(c)
             }

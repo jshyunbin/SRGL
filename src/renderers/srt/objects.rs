@@ -4,11 +4,11 @@ use crate::srt::ray::Ray;
 
 
 pub struct Surface {
-    diffuse: Vector3<f64>,
-    ambient: Vector3<f64>,
-    specular: Vector3<f64>,
-    spec_power: f64,
-    k_refl: f64,
+    pub diffuse: Vector3<f64>,
+    pub ambient: Vector3<f64>,
+    pub specular: Vector3<f64>,
+    pub spec_power: f64,
+    pub k_refl: f64,
 }
 
 impl Surface {
@@ -20,6 +20,16 @@ impl Surface {
     //
     //     }
     // }
+
+    pub fn copy(&self) -> Self {
+        Self {
+            diffuse: self.diffuse.xyz(),
+            ambient: self.ambient.xyz(),
+            specular: self.specular.xyz(),
+            spec_power: self.spec_power,
+            k_refl: self.k_refl,
+        }
+    }
 
     pub const SHINY: Self = Self {
         diffuse: Vector3::new(0.6, 0.6, 0.6),
@@ -90,6 +100,16 @@ impl Objects {
             Self::Cylinder(cylinder) => None,
             Self::Cone(cone) => None,
             Self::Box(box_) => None,
+        }
+    }
+
+    pub fn get_surface(&self) -> Surface {
+        match self {
+            Self::Sphere(sphere) => sphere.surface.copy(),
+            Self::Triangle(triangle) => Surface::SHINY,
+            Self::Cylinder(cylinder) => Surface::SHINY,
+            Self::Cone(cone) => Surface::SHINY,
+            Self::Box(box_) => Surface::SHINY,
         }
     }
 
