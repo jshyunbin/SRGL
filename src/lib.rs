@@ -1,4 +1,4 @@
-
+use nalgebra::{vector, Vector3};
 pub use pixels::Error;
 pub use crate::renderers::s2d::Shape;
 pub use crate::renderers::*;
@@ -11,8 +11,9 @@ use winit::dpi::LogicalSize;
 use winit::event::{Event, VirtualKeyCode};
 use winit::event_loop::{ControlFlow, EventLoop};
 use winit::window::{Window, WindowBuilder};
-use winit::window::CursorIcon;
 use winit_input_helper::WinitInputHelper;
+use crate::srt::light::Light;
+use crate::srt::objects::Objects;
 
 mod renderers;
 
@@ -21,6 +22,29 @@ pub enum RenderType {
     S2D(Shape),
     S3D,
     SRT,
+}
+
+pub struct Scene {
+    pub objects: Vec<Objects>,
+    pub lights: Vec<Light>,
+    pub background: Color,
+    pub eye: Vector3<f64>,
+    pub fov: f64,
+    pub uvw: [Vector3<f64>; 3],
+}
+
+impl Scene {
+    pub fn new(objects: Vec<Objects>, lights: Vec<Light>, background: Color, eye: Vector3<f64>,
+    fov: f64, uvw: [Vector3<f64>; 3]) -> Self {
+        Self {
+            objects,
+            lights,
+            background,
+            eye,
+            fov,
+            uvw,
+        }
+    }
 }
 
 #[derive(Default)]
@@ -34,6 +58,7 @@ pub struct CanvasAttributes {
     pub title: String,
     pub frame_rate: Option<u32>,
     pub render: RenderType,
+    pub scene: Scene,
 }
 
 impl Default for CanvasAttributes {
@@ -44,6 +69,8 @@ impl Default for CanvasAttributes {
             title: String::from(""),
             frame_rate: None,
             render: RenderType::S2D(Shape::Shapes(vec![])),
+            scene: Scene::new(vec![], vec![], Color::WHITE, vector![0., 0., 0.],
+            60., [vector![1., 0., 0.], vector![0., 1., 0.], vector![0., 0., 1.]]),
         }
     }
 }
@@ -79,6 +106,41 @@ impl CanvasBuilder {
         self
     }
 
+    pub fn with_object(mut self, object: Objects) -> Self {
+        self.canvas.scene.objects.push(object);
+        self
+    }
+
+    pub fn with_light(mut self, light: Light) -> Self {
+        self.canvas.scene.lights.push(light);
+        self
+    }
+
+    pub fn set_eye(mut self, x: f64, y: f64, z: f64) -> Self {
+        self.canvas.scene.eye = vector![x, y, z];
+        self
+    }
+
+    pub fn set_fov(mut self, fov: f64) -> Self {
+        self.canvas.scene.fov = fov;
+        self
+    }
+
+    pub fn set_uvw(mut self, u: Vec<f64>, v: Vec<f64>, w: Vec<f64>) -> Self {
+        self.canvas.scene.uvw = [Vector3::from_vec(u), Vector3::from_vec(v), Vector3::from_vec(w)];
+        self
+    }
+
+    pub fn set_background(mut self, bg: Color) -> Self {
+        self.canvas.scene.background = bg;
+        self
+    }
+    
+    pub fn load_scene(mut self, file_loc: & str) -> Self {
+        // todo: parse file and load scene
+        self
+    }
+
     pub fn build(self) -> Canvas {
         let w = self.canvas.width.expect("Size must be set");
         let h = self.canvas.height.expect("Size must be set");
@@ -89,7 +151,7 @@ impl CanvasBuilder {
             render: match self.canvas.render {
                 RenderType::S2D(shape) => Renderer::S2D(S2D::new(w, h, shape)),
                 RenderType::S3D => Renderer::S3D(S3D::new(w, h)),
-                RenderType::SRT => Renderer::SRT(SRT::example(w, h)),   // todo: change renderer struct
+                RenderType::SRT => Renderer::SRT(SRT::new(w, h, self.canvas.scene)),
             }
         }
     }

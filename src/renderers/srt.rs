@@ -1,13 +1,16 @@
 use std::f64::consts::PI;
 use nalgebra::{vector, Vector3};
+use crate::Scene;
 use crate::renderers::Color;
-use crate::srt::objects::{Objects, SphereObj, Surface};
+use crate::srt::objects::{Objects, Surface};
 use crate::srt::ray::Ray;
+use crate::srt::hit::Hit;
 use crate::srt::light::Light;
 
 pub mod objects;
 pub mod ray;
 pub mod light;
+pub mod hit;
 
 
 pub struct SRT {
@@ -22,52 +25,72 @@ pub struct SRT {
 }
 
 impl SRT {
-    pub fn new(width: u32, height: u32) -> Self {
+    pub fn new(width: u32, height: u32, canvas: Scene) -> Self {
         Self {
-            objects: vec![],
-            lights: vec![],
+            objects: canvas.objects,
+            lights: canvas.lights,
             width,
             height,
-            background: Color::from([0xff, 0xff, 0xff, 0xff]),
-            eye: vector![0., 0., 0.],
-            fov: 60.,
-            uvw: [vector![1., 0., 0.], vector![0., 1., 0.], vector![0., 0., 1.]],
+            background: canvas.background,
+            eye: canvas.eye,
+            fov: canvas.fov,
+            uvw: canvas.uvw,
         }
     }
 
-    // only for debugging; remove for release
-    pub fn example(width: u32, height: u32) -> Self {
-        Self {
-            objects: vec![Objects::make_sphere(0.8, 0.2, -7., 0.4, Surface::SHINY),
-                          Objects::make_sphere(-0.8, 0.2, -7., 0.8, Surface::SHINY)],
-            lights: vec![Light::new(8., 8., 3., Color::rgb(178, 178, 178))],
-            width,
-            height,
-            background: Color::rgb(155, 255, 255),
-            eye: vector![0., 0., 0.],
-            fov: 60.,
-            uvw: [vector![1., 0., 0.], vector![0., 1., 0.], vector![0., 0., 1.]],
+    pub fn get_color(&self, ray: &Ray, iter: u32) -> Color {
+        if iter == 0 {
+            Color::rgb(0, 0, 0)
+        } else {
+            let mut min_hit: Hit = Hit::default();
+            let mut min_exists: bool = false;
+            for i in 0..self.objects.len() {
+                let hit = self.objects[i].hit(ray);
+                if let Some(hit) = hit {
+                    let (hitt, hitn) = hit;
+                    if !min_exists || min_hit.t > hitt {
+                        min_exists = true;
+                        min_hit = Hit::new(hitt, i, hitn);
+                    }
+                }
+            }
+            if !min_exists {
+                self.background
+            } else {
+                min_hit.position = ray.get_t_pos(min_hit.t);
+                min_hit.surface = self.objects[min_hit.object_index].get_surface();
+
+                let amb: Vector3<f64> = self.objects[min_hit.object_index].get_ambient();
+
+                let mut dif: Vector3<f64> = vector![0., 0., 0.];
+                for l in &self.lights {
+                    let cl = l.get_color_vector();
+                    let cr = min_hit.surface.diffuse;
+                    let ldir = (min_hit.position - l.get_position()).normalize();
+                    dif += cl.component_mul(&cr) * f64::max(-ldir.dot(&min_hit.normal), 0.);
+                }
+
+
+                let mut spc: Vector3<f64> = vector![0., 0., 0.];
+                for l in &self.lights {
+                    let cl = l.get_color_vector();
+                    let cp = min_hit.surface.specular;
+                    let p = min_hit.surface.spec_power;
+                    let ldir = (min_hit.position - l.get_position()).normalize();
+                    spc += cl.component_mul(&cp) * (ldir - min_hit.normal).normalize()
+                        .dot(&min_hit.normal).powf(p);
+                }
+
+                let dir = -ray.get_direction();
+                let refl = min_hit.normal * (2. * dir.dot(&min_hit.normal)) - dir;
+                let refl_color = self.get_color(&Ray::from_vector(min_hit.position, refl), iter - 1);
+                let refl_color = refl_color.to_vector();
+
+                let c: Vector3<f64> = amb + dif + spc + min_hit.surface.k_refl * refl_color;
+
+                Color::from_vector(c)
+            }
         }
-    }
-
-    pub fn set_eye(&mut self, x: f64, y: f64, z: f64) {
-        self.eye = vector![x, y, z];
-    }
-
-    pub fn set_fov(&mut self, fov: f64) {
-        self.fov = fov;
-    }
-
-    pub fn set_uvw(&mut self, u: [f64; 3], v: [f64; 3], w: [f64; 3]) {
-        self.uvw = [Vector3::from(u), Vector3::from(v), Vector3::from(w)];
-    }
-
-    pub fn add_object(&mut self, object: Objects) {
-        self.objects.push(object);
-    }
-
-    pub fn add_light(&mut self, light: Light) {
-        self.lights.push(light)
     }
 
     pub fn render(&self, screen: &mut [u8]) {
@@ -80,7 +103,7 @@ impl SRT {
             // calculate view rays here
             let u = 2. * x as f64 / self.width as f64 - 1.;
             let v = 2. * y as f64 / self.height as f64 - 1.;
-            let d = 2. / (self.fov * PI / 360.).tan();
+            let d = 1. / (self.fov * PI / 360.).tan();
 
             let mut eye_ray = vector![0., 0., 0.];
 
@@ -91,9 +114,7 @@ impl SRT {
             let eye_ray = Ray::from_vector(self.eye, eye_ray);
 
 
-            pixel.copy_from_slice(&eye_ray.get_color(&self.objects, &self.lights,
-                                                     &self.background.to_vector(), 3)
-                .unwrap_or(self.background).to_array());
+            pixel.copy_from_slice(&self.get_color(&eye_ray, 3).to_array());
         }
     }
 }
