@@ -16,21 +16,17 @@ fn main() -> Result<(), srgl::Error> {
 
 ## Usage
 
-**SRGL** is designed to be as simple and easy to use. You can open an empty window with just 
-few lines of code!
-
+**SRGL** is a Rust based graphic rendering library.
+It is designed to be easy, fast and fun!
 
 ## Features
 
-**SRGL** is in a very early stage of development and many of the 
-features are still work in progress.
-
- - 2D rendering 
- - anti-aliasing (wip)
- - 3D rendering (wip)
- - shading (Flat, Gouraud, Phong) (wip)
- - ray tracing
- - save img files (wip)
+- 2D rendering
+- anti-aliasing (wip)
+- 3D rendering (wip)
+- shading (Flat, Gouraud, Phong) (wip)
+- ray tracing
+- save img files (wip)
 
 ## Examples
 
@@ -39,4 +35,3 @@ Examples are available in `/examples`.
 - [Simple Window](./examples/simple-window)
 - [Simple2D](./examples/simple2d)
 - [Sphere Ray Tracing](./examples/sphere-rt)
-
